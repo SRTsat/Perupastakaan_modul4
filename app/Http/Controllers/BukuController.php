@@ -20,14 +20,33 @@ class BukuController extends Controller
 
     // Simpan buku baru (Create) [cite: 88]
     public function store(Request $request) {
+        // 1. Gabung semua validasi jadi satu biar efisien
         $request->validate([
             'judul' => 'required',
             'penulis' => 'required',
             'penerbit' => 'required',
             'stok' => 'required|integer|min:0',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' 
         ]);
 
-        Buku::create($request->all());
+        // 2. Ambil semua data input
+        $data = $request->all();
+
+        // 3. Proses foto kalo ada
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            
+            // Pindah ke folder public
+            $file->move(public_path('storage/buku'), $nama_file);
+            
+            // Timpa isi $data['foto'] dengan nama file yang baru
+            $data['foto'] = $nama_file;
+        }
+
+        // 4. PENTING: Pake variabel $data, JANGAN $request->all()
+        Buku::create($data); 
+
         return back()->with('success', 'Buku berhasil ditambahkan!');
     }
 
