@@ -44,7 +44,10 @@ Route::middleware(['auth'])->prefix('siswa')->group(function () {
 
     Route::get('/pinjam', [SiswaController::class, 'indexPinjam'])->name('siswa.pinjam');
 
-    Route::post('/pinjam', [PeminjamanController::class, 'store']);
+    // Pastiin controller dan fungsinya sinkron
+    Route::post('/pinjam', [SiswaController::class, 'pinjamBuku'])->name('pinjam.store');
 
-    Route::post('/kembali/{id}', [PeminjamanController::class, 'kembalikan']);
+    // INI YANG TADI ERROR: Lu harus kasih ->name('pinjam.kembali')
+    // Dan pastiin fungsinya adalah 'kembaliBuku' sesuai yang ada di SiswaController lu
+    Route::post('/kembali/{id}', [SiswaController::class, 'kembaliBuku'])->name('pinjam.kembali');
 });

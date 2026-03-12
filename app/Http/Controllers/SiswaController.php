@@ -10,17 +10,54 @@ use Illuminate\Support\Facades\Auth;
 class SiswaController extends Controller
 {
     public function dashboard() {
-        return view('siswa.dashboard'); // Dashboard Siswa [cite: 83]
+        $bukus = Buku::all();
+        return view('siswa.dashboard', compact('bukus'));
     }
 
-    // Melakukan Peminjaman [cite: 91, 106]
+    // INI YANG TADI ILANG BRO: Menampilkan buku yang sedang dipinjam
+    public function indexPinjam() {
+        $pinjaman = Peminjaman::where('user_id', Auth::id())
+                    ->with('buku')
+                    ->latest()
+                    ->get();
+        
+        return view('siswa.pinjam', compact('pinjaman'));
+    }
+
+    // Melakukan Peminjaman
     public function pinjamBuku(Request $request) {
+        $buku = Buku::findOrFail($request->buku_id);
+
+        // Validasi stok (Biar nggak minus)
+        if ($buku->stok <= 0) {
+            return back()->with('error', 'Stok buku habis!');
+        }
+
         Peminjaman::create([
             'user_id' => Auth::id(),
             'buku_id' => $request->buku_id,
             'tanggal_pinjam' => now(),
             'status' => 'dipinjam'
         ]);
-        return back()->with('success', 'Buku berhasil dipinjam!');
+
+        // Kurangi stok buku
+        $buku->decrement('stok');
+
+        return redirect()->route('siswa.pinjam')->with('success', 'Buku berhasil dipinjam!');
+    }
+
+    // Melakukan Pengembalian
+    public function kembaliBuku($id) {
+        $pinjam = Peminjaman::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+        
+        $pinjam->update([
+            'tanggal_kembali' => now(),
+            'status' => 'dikembalikan'
+        ]);
+
+        // Tambah stok buku balik
+        $pinjam->buku->increment('stok');
+
+        return back()->with('success', 'Buku berhasil dikembalikan!');
     }
 }

@@ -12,7 +12,7 @@
             <th>Gambar</th>
             <th>Judul</th>
             <th>Penulis</th>
-            <th>Stok</th>
+            <th>Genre</th> <th>Stok</th>
             <th>Aksi</th>
         </tr>
     </thead>
@@ -21,14 +21,14 @@
         <tr>
             <td>
                 @if($b->foto)
-                    <img src="{{ asset('storage/buku/'.$b->foto) }}" width="50">
+                    <img src="{{ asset('storage/buku/'.$b->foto) }}" width="50" class="img-thumbnail">
                 @else
                     <span class="text-muted">No Image</span>
                 @endif
             </td>
             <td>{{ $b->judul }}</td>
             <td>{{ $b->penulis }}</td>
-            <td>{{ $b->stok }}</td>
+            <td><span class="badge bg-info text-dark">{{ $b->genre ?? 'Umum' }}</span></td> <td>{{ $b->stok }}</td>
             <td>
                 <form action="{{ route('buku.destroy', $b->id) }}" method="POST" class="d-inline">
                     @csrf @method('DELETE')
@@ -57,6 +57,16 @@
                 
                 <label class="form-label">Penerbit</label>
                 <input type="text" name="penerbit" class="form-control mb-2" required>
+
+                <label class="form-label">Genre</label>
+                <select name="genre" class="form-control mb-2" required>
+                    <option value="">-- Pilih Genre --</option>
+                    <option value="Fiksi">Fiksi</option>
+                    <option value="Non-Fiksi">Non-Fiksi</option>
+                    <option value="Novel">Novel</option>
+                    <option value="Edukasi">Edukasi</option>
+                    <option value="Teknologi">Teknologi</option>
+                </select>
                 
                 <label class="form-label">Jumlah Stok</label>
                 <input type="number" name="stok" class="form-control mb-2" required>
