@@ -3,7 +3,15 @@
 @section('content')
 <div class="d-flex justify-content-between mb-3">
     <h3>Data Koleksi Buku</h3>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Buku Baru</button>
+    <div class="d-flex">
+        <form action="{{ route('buku.index') }}" method="GET" class="me-2">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Cari buku/genre..." value="{{ request('search') }}">
+                <button class="btn btn-outline-secondary" type="submit">Cari</button>
+            </div>
+        </form>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Buku Baru</button>
+    </div>
 </div>
 
 <table class="table table-striped table-bordered align-middle">

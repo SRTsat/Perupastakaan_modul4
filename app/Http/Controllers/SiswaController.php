@@ -9,8 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class SiswaController extends Controller
 {
-    public function dashboard() {
-        $bukus = Buku::all();
+   public function dashboard(Request $request) {
+        $search = $request->search;
+        $bukus = \App\Models\Buku::when($search, function ($query) use ($search) {
+            $query->where('judul', 'like', "%{$search}%")
+                ->orWhere('penulis', 'like', "%{$search}%")
+                ->orWhere('genre', 'like', "%{$search}%");
+        })->get();
+
         return view('siswa.dashboard', compact('bukus'));
     }
 

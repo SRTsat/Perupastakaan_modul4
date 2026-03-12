@@ -9,13 +9,14 @@ class BukuController extends Controller
 {
     // Menampilkan list buku & Fitur Pencarian 
     public function index(Request $request) {
-        $query = Buku::query();
-        if ($request->has('search')) {
-            $query->where('judul', 'like', '%' . $request->search . '%')
-                  ->orWhere('penulis', 'like', '%' . $request->search . '%');
-        }
-        $bukus = $query->get();
-        return view('admin.buku.index', compact('bukus'));
+        $search = $request->search;
+        $bukus = \App\Models\Buku::when($search, function ($query) use ($search) {
+        $query->where('judul', 'like', "%{$search}%")
+              ->orWhere('penulis', 'like', "%{$search}%")
+              ->orWhere('genre', 'like', "%{$search}%");
+        })->get();
+
+     return view('admin.buku.index', compact('bukus'));
     }
 
     // Simpan buku baru (Create) [cite: 88]
