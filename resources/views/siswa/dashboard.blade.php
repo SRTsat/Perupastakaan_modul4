@@ -8,7 +8,7 @@
     <div class="col-md-6">
         <form action="{{ route('siswa.dashboard') }}" method="GET">
             <div class="input-group shadow-sm">
-                <input type="text" name="search" class="form-control" placeholder="Cari judul, penulis, atau genre..." value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control" placeholder="Cari judul..." value="{{ request('search') }}">
                 <button class="btn btn-primary" type="submit">Cari</button>
                 @if(request('search'))
                     <a href="{{ route('siswa.dashboard') }}" class="btn btn-secondary">Reset</a>
