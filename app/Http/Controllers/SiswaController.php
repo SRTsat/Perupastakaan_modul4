@@ -11,16 +11,27 @@ class SiswaController extends Controller
 {
     public function dashboard(Request $request) {
         $search = $request->search;
-        
-        // Logika pencarian untuk kondisi tertentu (Judul, Penulis, Genre) 
-        $bukus = \App\Models\Buku::when($search, function ($query) use ($search) {
-            $query->where('judul', 'like', "%{$search}%")
-                ->orWhere('penulis', 'like', "%{$search}%")
-                ->orWhere('genre', 'like', "%{$search}%");
-        })->get();
+        $genre = $request->genre;
 
-        // Jika request datang dari JavaScript (AJAX)
+        $query = \App\Models\Buku::query();
+
+        // Filter Genre dulu (Exact Match)
+        if ($request->filled('genre')) {
+            $query->where('genre', $genre);
+        }
+
+        // Baru kemudian Search (Like Match)
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                ->orWhere('penulis', 'like', "%{$search}%");
+            });
+        }
+
+        $bukus = $query->get();
+
         if ($request->ajax()) {
+            // Render partial view khusus buat list bukunya aja
             return view('siswa._buku_list', compact('bukus'))->render();
         }
 

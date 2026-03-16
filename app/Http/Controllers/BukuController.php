@@ -10,14 +10,26 @@ class BukuController extends Controller
     // Menampilkan list buku & Fitur Pencarian 
     public function index(Request $request) {
         $search = $request->search;
-        
-        $bukus = \App\Models\Buku::when($search, function ($query) use ($search) {
-            $query->where('judul', 'like', "%{$search}%")
-                ->orWhere('penulis', 'like', "%{$search}%")
-                ->orWhere('genre', 'like', "%{$search}%");
-        })->get();
+        $genre = $request->genre;
 
-        // Cek jika request datang dari AJAX
+        $query = \App\Models\Buku::query();
+
+        // Filter Genre (Exact Match)
+        if ($request->filled('genre')) {
+            $query->where('genre', $genre);
+        }
+
+        // Search (Like Match)
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('judul', 'like', "%{$search}%")
+                ->orWhere('penulis', 'like', "%{$search}%");
+            });
+        }
+
+        $bukus = $query->get();
+
+        // Cek jika request dari AJAX JavaScript
         if ($request->ajax()) {
             return view('admin.buku._table_buku', compact('bukus'))->render();
         }
