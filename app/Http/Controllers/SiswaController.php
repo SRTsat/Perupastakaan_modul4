@@ -9,13 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class SiswaController extends Controller
 {
-   public function dashboard(Request $request) {
+    public function dashboard(Request $request) {
         $search = $request->search;
+        
+        // Logika pencarian untuk kondisi tertentu (Judul, Penulis, Genre) 
         $bukus = \App\Models\Buku::when($search, function ($query) use ($search) {
             $query->where('judul', 'like', "%{$search}%")
                 ->orWhere('penulis', 'like', "%{$search}%")
                 ->orWhere('genre', 'like', "%{$search}%");
         })->get();
+
+        // Jika request datang dari JavaScript (AJAX)
+        if ($request->ajax()) {
+            return view('siswa._buku_list', compact('bukus'))->render();
+        }
 
         return view('siswa.dashboard', compact('bukus'));
     }
