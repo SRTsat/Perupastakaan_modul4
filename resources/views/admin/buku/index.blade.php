@@ -13,6 +13,9 @@
             <option value="Teknologi">Teknologi</option>
         </select>
         <input type="text" id="admin-live-search" class="form-control" placeholder="Cari judul/penulis..." style="width: 250px;">
+        <a href="{{ route('buku.exportPdf') }}" class="btn btn-danger">
+            <i class="bi bi-file-earmark-pdf"></i> Export PDF
+        </a>
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalTambah">Tambah Buku</button>
     </div>
 </div>

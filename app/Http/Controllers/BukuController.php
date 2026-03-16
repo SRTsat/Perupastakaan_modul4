@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Buku;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BukuController extends Controller
 {
@@ -106,5 +106,16 @@ class BukuController extends Controller
     public function destroy($id) {
         Buku::destroy($id);
         return back()->with('success', 'Buku berhasil dihapus!');
+    }
+
+    public function exportPdf()
+    {
+        $bukus = Buku::all();
+        
+        // Kita panggil view khusus buat format PDF
+        $pdf = Pdf::loadView('admin.buku.pdf', compact('bukus'));
+        
+        // Download file-nya
+        return $pdf->download('laporan-buku-'.date('Y-m-d').'.pdf');
     }
 }

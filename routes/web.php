@@ -36,6 +36,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Transaksi
     Route::get('/transaksi', [PeminjamanController::class, 'indexAdmin'])->name('admin.transaksi');
+
+    // Export PDF Buku
+    Route::get('/admin/buku/export-pdf', [BukuController::class, 'exportPdf'])->name('buku.exportPdf');
 });
 
 Route::middleware(['auth'])->prefix('siswa')->group(function () {
