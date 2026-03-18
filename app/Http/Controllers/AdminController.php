@@ -4,12 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Buku;
 use App\Models\User;
+use App\Models\Peminjaman;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
     public function dashboard() {
-        return view('admin.dashboard'); // Dashboard Admin [cite: 73]
+        // Ambil statistik buat ditampilin di Card Dashboard
+        $total_buku = Buku::count();
+        $total_siswa = User::where('role', 'siswa')->count();
+        $total_pinjam = Peminjaman::where('status', 'dipinjam')->count();
+        
+        // Ngitung semua denda yang sudah terkumpul di database
+        $total_denda = Peminjaman::sum('denda'); 
+
+        return view('admin.dashboard', compact(
+            'total_buku', 
+            'total_siswa', 
+            'total_pinjam', 
+            'total_denda'
+        ));
     }
 
     // Contoh CRUD Buku [cite: 88, 93]
