@@ -11,16 +11,16 @@ class SiswaController extends Controller
 {
     public function dashboard(Request $request) {
         $search = $request->search;
-        $genre = $request->genre;
+        $genres = $request->genres; // Sekarang ini isinya Array [ "Fiksi", "Novel" ]
 
         $query = \App\Models\Buku::query();
 
-        // Filter Genre dulu (Exact Match)
-        if ($request->filled('genre')) {
-            $query->where('genre', $genre);
+        // Filter Multi-Genre
+        if ($request->filled('genres')) {
+            $query->whereIn('genre', $genres); // Pakai whereIn untuk array
         }
 
-        // Baru kemudian Search (Like Match)
+        // Live Search
         if ($request->filled('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('judul', 'like', "%{$search}%")
@@ -31,7 +31,6 @@ class SiswaController extends Controller
         $bukus = $query->get();
 
         if ($request->ajax()) {
-            // Render partial view khusus buat list bukunya aja
             return view('siswa._buku_list', compact('bukus'))->render();
         }
 
