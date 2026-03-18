@@ -12,16 +12,16 @@ class BukuController extends Controller
     // Menampilkan list buku & Fitur Pencarian 
     public function index(Request $request) {
         $search = $request->search;
-        $genre = $request->genre;
+        $genres = $request->genres; // Sekarang nerima array
 
         $query = \App\Models\Buku::query();
 
-        // Filter Genre (Exact Match)
-        if ($request->filled('genre')) {
-            $query->where('genre', $genre);
+        // Multi-filter Genre
+        if ($request->filled('genres')) {
+            $query->whereIn('genre', $genres);
         }
 
-        // Search (Like Match)
+        // Live Search
         if ($request->filled('search')) {
             $query->where(function($q) use ($search) {
                 $q->where('judul', 'like', "%{$search}%")
@@ -31,7 +31,6 @@ class BukuController extends Controller
 
         $bukus = $query->get();
 
-        // Cek jika request dari AJAX JavaScript
         if ($request->ajax()) {
             return view('admin.buku._table_buku', compact('bukus'))->render();
         }
