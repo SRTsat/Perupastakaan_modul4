@@ -33,6 +33,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     // Anggota
     Route::get('/anggota', [AdminController::class, 'indexAnggota'])->name('admin.anggota');
+    Route::post('/anggota', [AdminController::class, 'storeAnggota'])->name('admin.anggota.store');
+    Route::put('/anggota/{id}', [AdminController::class, 'updateAnggota'])->name('admin.anggota.update');
+    Route::delete('/anggota/{id}', [AdminController::class, 'destroyAnggota'])->name('admin.anggota.destroy');
 
     // Transaksi
     Route::get('/transaksi', [PeminjamanController::class, 'indexAdmin'])->name('admin.transaksi');

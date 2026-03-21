@@ -43,4 +43,41 @@ class AdminController extends Controller
         $anggotas = User::where('role', 'siswa')->get();
         return view('admin.anggota.index', compact('anggotas'));
     }
+
+    public function storeAnggota(Request $request) {
+        $request->validate([
+            'name' => 'required',
+            'username' => 'required|unique:users',
+            'password' => 'required|min:6'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'password' => bcrypt($request->password),
+            'role' => 'siswa'
+        ]);
+
+        return back()->with('success', 'Anggota berhasil ditambahkan!');
+    }
+
+    // Update data siswa
+    public function updateAnggota(Request $request, $id) {
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->username = $request->username;
+        
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+        
+        $user->save();
+        return back()->with('success', 'Data anggota berhasil diupdate!');
+    }
+
+    // Hapus siswa
+    public function destroyAnggota($id) {
+        User::destroy($id);
+        return back()->with('success', 'Anggota berhasil dihapus!');
+    }
 }
